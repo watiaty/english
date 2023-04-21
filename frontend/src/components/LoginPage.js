@@ -33,7 +33,7 @@ export default function Login() {
                 if (data.access_token && data.refresh_token) {
                     localStorage.setItem('access_token', data.access_token);
                     localStorage.setItem('refresh_token', data.refresh_token);
-                    window.location.href = "http://localhost:3000" + "/auth"
+                    window.location.href = "http://localhost:3000"
                 } else {
                     alert("Failed. Try again")
                 }

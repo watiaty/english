@@ -1,17 +1,21 @@
 import React from 'react';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
-import App from './App';
-import Login from './components/LoginPage';
-import Register from './components/RegisterPage';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import TestPage from './components/TestPage';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
+import LogoutPage from "./components/LogoutPage";
 
-const Routes = () => (
-    <Router>
-        <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/" element={<App />} />
-        </Routes>
-    </Router>
-);
+const Routes = () => {
+    return (
+        <Router>
+            <Switch>
+                <Route exact path="/" component={TestPage} />
+                <Route exact path="/login" component={LoginPage} />
+                <Route exact path="/register" component={RegisterPage} />
+                <Route exact path="/logout" component={LogoutPage}/>
+            </Switch>
+        </Router>
+    );
+};
 
 export default Routes;

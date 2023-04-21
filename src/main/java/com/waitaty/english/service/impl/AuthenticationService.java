@@ -120,4 +120,23 @@ public class AuthenticationService {
             }
         }
     }
+
+    public void logout(HttpServletRequest request) {
+        String authToken = extractAuthTokenFromRequest(request);
+        if (authToken != null) {
+            String userEmail = jwtService.extractUsername(authToken);
+            if (userEmail != null) {
+                User user = repository.findByEmail(userEmail).orElseThrow();
+                revokeAllUserTokens(user);
+            }
+        }
+    }
+
+    private String extractAuthTokenFromRequest(HttpServletRequest request) {
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
+    }
 }
