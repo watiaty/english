@@ -27,5 +27,9 @@ public class WordService {
     public List<Word> findAll() {
         return wordRepository.findAll();
     }
+
+    public List<Word> findWordsNotInUserList(Long userId) {
+        return wordRepository.findWordsNotInUserList(userId);
+    }
 }
 

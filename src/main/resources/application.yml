@@ -12,6 +12,9 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
 
 application:
   security:
@@ -20,3 +23,6 @@ application:
       expiration: 60000 # 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
+
+
+
