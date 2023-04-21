@@ -1,36 +1,43 @@
-import './App.css';
-import React, { Component } from 'react';
-import Register from './components/LoginPage';
+import React, { useState, useEffect } from 'react';
+import Login from "./components/LoginPage";
+import Register from "./components/RegisterPage";
+import Test from "./components/TestPage";
 
-class App extends Component {
-  state = {
-    clients: []
-  };
+const App = () => {
 
-  async componentDidMount() {
-    const response = await fetch('api/v1/words');
-    const body = await response.json();
-    this.setState({clients: body});
-  }
+    const [clients, setClients] = useState([]);
 
-  render() {
-    const {clients} = this.state;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('api/v1/words');
+                const body = await response.json();
+                setClients(body);
+            } catch (error) {
+                console.error('Failed to fetch clients:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
     return (
         <div className="App">
-          <header className="App-header">
-            <div className="App-intro">
-              <h2>Clients</h2>
-              {clients.map(client =>
-                  <div key={client.id}>
-                    {client.word}
-                  </div>
-              )}
-            </div>
-            <Register />
-          </header>
+            <header className="App-header">
+                <div className="App-intro">
+                    <h2>Clients</h2>
+                    {clients.map(client =>
+                        <div key={client.id}>
+                            {client.word}
+                        </div>
+                    )}
+                </div>
+                <Test/>
+                <Login/>
+                <Register/>
+                {/*<Routes/>*/}
+            </header>
         </div>
     );
-  }
-}
+};
 
 export default App;

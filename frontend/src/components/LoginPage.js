@@ -1,21 +1,18 @@
-import React, { useState } from 'react'
+import React, {useState} from 'react'
 import axios from 'axios';
 import validator from 'validator';
 
-export default function Register () {
-    const [register, setRegister] = useState(() => {
+export default function Login() {
+    const [login, setLogin] = useState(() => {
         return {
-            firstname: "",
-            lastname: "",
             email: "",
             password: "",
-            password2: "",
         }
     })
 
-    const changeInputRegister = event => {
+    const changeInputLogin = event => {
         event.persist()
-        setRegister(prev => {
+        setLogin(prev => {
             return {
                 ...prev,
                 [event.target.name]: event.target.value,
@@ -23,23 +20,19 @@ export default function Register () {
         })
     }
 
-    const submitChackin = event => {
+    const submitCheckin = event => {
         event.preventDefault();
-        if(!validator.isEmail(register.email)) {
+        if (!validator.isEmail(login.email)) {
             alert("You did not enter email")
-        } else if(register.password !== register.password2) {
-            alert("Repeated password incorrectly")
-        } else if(!validator.isStrongPassword(register.password, {minSymbols: 0})) {
-            alert("Password must consist of one lowercase, uppercase letter and number, at least 8 characters")
         } else {
-            axios.post("http://localhost:8080/api/v1/auth/register", {
-                firstname: register.firstname,
-                lastname: register.lastname,
-                email: register.email,
-                password: register.password,
+            axios.post("http://localhost:8080/api/v1/auth/authenticate", {
+                email: login.email,
+                password: login.password,
             }).then(res => {
-                const { data } = res;
+                const {data} = res;
                 if (data.access_token && data.refresh_token) {
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('refresh_token', data.refresh_token);
                     window.location.href = "http://localhost:3000" + "/auth"
                 } else {
                     alert("Failed. Try again")
@@ -54,43 +47,21 @@ export default function Register () {
 
     return (
         <div className="form">
-            <h2>Register user:</h2>
-            <form onSubmit={submitChackin}>
-                <p>Firstname: <input
-                    type="firstname"
-                    id="firstname"
-                    name="firstname"
-                    value={register.firstname}
-                    onChange={changeInputRegister}/>
-                </p>
-                <p>Lastname: <input
-                    type="lastname"
-                    id="lastname"
-                    name="lastname"
-                    value={register.lastname}
-                    onChange={changeInputRegister}/>
-                </p>
+            <h2>Login user:</h2>
+            <form onSubmit={submitCheckin}>
                 <p>Email: <input
                     type="email"
                     id="email"
                     name="email"
-                    value={register.email}
-                    onChange={changeInputRegister}
-                    formnovalidate
+                    value={login.email}
+                    onChange={changeInputLogin}
                 /></p>
                 <p>Password: <input
                     type="password"
                     id="password"
                     name="password"
-                    value={register.password}
-                    onChange={changeInputRegister}
-                /></p>
-                <p>Repeat password: <input
-                    type="password"
-                    id="password2"
-                    name="password2"
-                    value={register.password2}
-                    onChange={changeInputRegister}
+                    value={login.password}
+                    onChange={changeInputLogin}
                 /></p>
                 <input type="submit"/>
             </form>
