@@ -3,8 +3,9 @@ package com.waitaty.english.controller;
 import com.waitaty.english.entity.User;
 import com.waitaty.english.entity.Word;
 import com.waitaty.english.service.impl.UserServiceImpl;
-import com.waitaty.english.service.impl.WordService;
+import com.waitaty.english.service.impl.WordServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,14 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/words")
+@RequiredArgsConstructor
 public class WordController {
-    private final WordService wordService;
+    private final WordServiceImpl wordService;
     private final UserServiceImpl userService;
-
-    public WordController(WordService wordService, UserServiceImpl userService) {
-        this.wordService = wordService;
-        this.userService = userService;
-    }
 
     @GetMapping
     public ResponseEntity<List<Word>> getAll() {

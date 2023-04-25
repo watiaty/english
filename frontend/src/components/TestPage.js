@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Button} from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+// import jwtDecode from 'jwt-decode';
 
 export default function Test() {
     const [data, setData] = useState(null);
+    const token = localStorage.getItem('access_token');
+    const [countLearnedWords, setCountLearnedWords] = useState([]);
+    const [countLearningWords, setCountLearningWords] = useState([]);
+    // const decodedToken = jwtDecode(token);
+    // const username = decodedToken.sub;
 
     useEffect(() => {
-        const token = localStorage.getItem('access_token');
         axios
             .get('http://localhost:8080/api/v1/demo-controller', {
                 headers: {
@@ -21,8 +27,6 @@ export default function Test() {
                 console.log(error);
             });
     }, []);
-
-    const [clients, setClients] = useState([]);
 
     const logout = async () => {
         try {
@@ -39,7 +43,7 @@ export default function Test() {
             try {
                 const response = await fetch('api/v1/words');
                 const body = await response.json();
-                setClients(body);
+                // setClients(body);
             } catch (error) {
                 console.error('Failed to fetch clients:', error);
             }
@@ -47,36 +51,78 @@ export default function Test() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const countLearningWords = async () => {
+            try {
+                const response = await fetch('api/v1/wordlist/count-learning-words', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const body = await response.json();
+                setCountLearningWords(body);
+            } catch (error) {
+                console.error('Failed to fetch clients:', error);
+            }
+        };
+        countLearningWords();
+    }, []);
+
+    useEffect(() => {
+        const countLearnedWords = async () => {
+            try {
+                const response = await fetch('api/v1/wordlist/count-learned-words', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const body = await response.json();
+                setCountLearnedWords(body);
+            } catch (error) {
+                console.error('Failed to fetch clients:', error);
+            }
+        };
+        countLearnedWords();
+    }, []);
+
     return (
-        <div>
-            {data ? (
-                <div>
-                    <Button variant="contained" color="primary" onClick={logout}>
-                        Logout
-                    </Button>
-                </div>
-            ) : (
-                <div>
-                    <Button component={Link} to="/login" variant="contained" color="primary">
-                        Login
-                    </Button>
-                    <Button component={Link} to="/register" variant="contained" color="primary">
-                        Register
-                    </Button>
-                </div>
-            )}
-            <h2>Not protected data</h2>
-            {clients.map((client) => (
-                <div key={client.id}>{client.word}</div>
-            ))}
-            {data ? (
-                <div>
-                    <h2>Protected Data</h2>
-                    <p>{data}</p>
-                </div>
-            ) : (
-                <p>Loading...</p>
-            )}
-        </div>
+        <React.Fragment>
+            <CssBaseline/>
+            <div>
+                {data ? (
+                    <div>
+                        <Button variant="outlined" color="primary" onClick={logout}>
+                            Logout
+                        </Button>
+                        <div>Изучено слов: {countLearnedWords}</div>
+                        <div>Слов на изучении: {countLearningWords}</div>
+                    </div>
+                ) : (
+                    <div>
+
+                        <Button component={Link} to="/sign-in" variant="contained">
+                            Login
+                        </Button>
+                        <Button component={Link} to="/sign-up" variant="contained" color="primary">
+                            Register
+                        </Button>
+                    </div>
+                )}
+                {/*<h2>Not protected data</h2>*/}
+                {/*{clients.map((client) => (*/}
+                {/*    <div key={client.id}>{client.word}</div>*/}
+                {/*))}*/}
+                <h2>Words</h2>
+                <Button component={Link} to="/new-words" variant="contained">
+                    Learn new words
+                </Button>
+                <Button component={Link} to="/practice" variant="contained">
+                    Practice
+                </Button>
+                <Button component={Link} to="/my-words" variant="contained">
+                    My words
+                </Button>
+            </div>
+        </React.Fragment>
     );
 }
